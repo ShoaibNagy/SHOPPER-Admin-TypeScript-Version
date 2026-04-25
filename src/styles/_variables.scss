@@ -1,0 +1,72 @@
+// Typography
+$font-display: 'Unbounded', sans-serif;
+$font-body: 'DM Sans', sans-serif;
+
+// Surfaces (Dark-first)
+$color-surface: #0A0A0A;
+$color-surface-1: #141414;
+$color-surface-2: #1F1F1F;
+$color-surface-3: #2A2A2A;
+$color-surface-4: #333333;
+
+// Brand & Semantic
+$color-brand-orange: #FF6B00;
+$color-brand-orange-hover: #E55A00;
+$color-brand-orange-light: rgba(255, 107, 0, 0.1);
+
+$color-success: #22C55E;
+$color-warning: #F59E0B;
+$color-danger: #EF4444;
+$color-info: #3B82F6;
+
+// Text Colors
+$color-text-primary: #F5F5F5;
+$color-text-secondary: #A3A3A3;
+$color-text-muted: #737373;
+$color-text-inverse: #0A0A0A;
+
+// Borders & Focus
+$color-border: #262626;
+$color-border-hover: #404040;
+$color-focus-ring: rgba(255, 107, 0, 0.4);
+
+// Spacing Scale (4px base)
+$space-1: 0.25rem; // 4px
+$space-2: 0.5rem;  // 8px
+$space-3: 0.75rem; // 12px
+$space-4: 1rem;    // 16px
+$space-5: 1.25rem; // 20px
+$space-6: 1.5rem;  // 24px
+$space-8: 2rem;    // 32px
+$space-10: 2.5rem; // 40px
+$space-12: 3rem;   // 48px
+$space-16: 4rem;   // 64px
+$space-24: 6rem;   // 96px
+
+// Border Radius
+$radius-sm: 0.25rem;  // 4px
+$radius-md: 0.375rem; // 6px
+$radius-lg: 0.5rem;   // 8px
+$radius-xl: 0.75rem;  // 12px
+$radius-2xl: 1rem;    // 16px
+$radius-3xl: 1.5rem;  // 24px
+$radius-full: 9999px;
+
+// Admin Layout Dimensions
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 72px;
+$topbar-height: 64px;
+
+// Z-Index Scale
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-overlay: 300;
+$z-modal: 400;
+$z-popover: 500;
+$z-toast: 600;
+
+// Transitions & Easing
+$transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-medium: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+$ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

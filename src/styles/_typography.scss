@@ -1,0 +1,28 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font-display;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  
+  .heading-xl { font-size: 3rem; font-weight: 900; letter-spacing: -0.04em; }
+  .heading-lg { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; }
+  .heading-md { font-size: 1.5rem; font-weight: 600; }
+  .heading-sm { font-size: 1.125rem; font-weight: 600; }
+  
+  .body-lg { font-size: 1.125rem; line-height: 1.6; }
+  .body-md { font-size: 1rem; line-height: 1.65; }
+  .body-sm { font-size: 0.875rem; line-height: 1.5; }
+  .body-xs { font-size: 0.75rem; line-height: 1.4; color: $color-text-muted; }
+  
+  .text-brand { color: $color-brand-orange; }
+  .text-success { color: $color-success; }
+  .text-warning { color: $color-warning; }
+  .text-danger { color: $color-danger; }
+  .text-muted { color: $color-text-muted; }
+  .text-secondary { color: $color-text-secondary; }
+  
+  a:hover { color: $color-brand-orange; }

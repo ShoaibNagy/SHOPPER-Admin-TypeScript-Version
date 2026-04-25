@@ -1,0 +1,28 @@
+// Project base styles
+@use './reset';
+@use './typography';
+@use './animations';
+@use './tables';
+@use './forms';
+@use 'variables' as *;
+@use 'mixins' as *;
+
+
+
+// Global Utilities
+.container-admin {
+  width: 100%; max-width: 1440px;
+  margin-left: auto; margin-right: auto;
+  padding-left: $space-6; padding-right: $space-6;
+}
+
+.glass-panel {
+  @include glass-effect(0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $radius-xl;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.scrollable-area { @include custom-scrollbar; }
+.font-display { font-family: $font-display; }
+.font-body { font-family: $font-body; }
