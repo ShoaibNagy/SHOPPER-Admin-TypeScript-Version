@@ -1,55 +1,303 @@
-@use 'sass:map';
+// =============================================================================
+// SHOPPER ADMIN — SCSS Mixins
+// =============================================================================
+// Auto-injected into every CSS Module via Vite additionalData.
+// =============================================================================
+
 @use 'variables' as *;
 
-$breakpoints: (
-  'sm': 640px,
-  'md': 768px,
-  'lg': 1024px,
-  'xl': 1280px,
-  '2xl': 1536px,
-  'admin-xl': 1440px
-);
+// -----------------------------------------------------------------------------
+// 1. RESPONSIVE BREAKPOINTS
+// Usage:  @include respond-to('md') { ... }
+// -----------------------------------------------------------------------------
+@mixin respond-to($bp) {
+  @if $bp == 'xs'  { @media (min-width: $bp-xs)  { @content; } }
+  @else if $bp == 'sm'  { @media (min-width: $bp-sm)  { @content; } }
+  @else if $bp == 'md'  { @media (min-width: $bp-md)  { @content; } }
+  @else if $bp == 'lg'  { @media (min-width: $bp-lg)  { @content; } }
+  @else if $bp == 'xl'  { @media (min-width: $bp-xl)  { @content; } }
+  @else if $bp == '2xl' { @media (min-width: $bp-2xl) { @content; } }
+  @else { @warn "Unknown breakpoint: #{$bp}"; }
+}
 
-@mixin respond-to($breakpoint) {
-  @if map.has-key($breakpoints, $breakpoint) {
-    @media (min-width: map.get($breakpoints, $breakpoint)) { @content; }
+// Max-width (mobile-first overflow)
+@mixin respond-below($bp) {
+  @if $bp == 'sm'  { @media (max-width: #{$bp-sm - 1px})  { @content; } }
+  @else if $bp == 'md'  { @media (max-width: #{$bp-md - 1px})  { @content; } }
+  @else if $bp == 'lg'  { @media (max-width: #{$bp-lg - 1px})  { @content; } }
+  @else if $bp == 'xl'  { @media (max-width: #{$bp-xl - 1px})  { @content; } }
+  @else { @warn "Unknown breakpoint: #{$bp}"; }
+}
+
+// -----------------------------------------------------------------------------
+// 2. FOCUS RING — accessible, brand-colored focus indicator
+// Usage:  @include focus-ring;         // default brand ring
+//         @include focus-ring($danger); // custom color
+// -----------------------------------------------------------------------------
+@mixin focus-ring($color: $brand-color, $offset: 2px) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+    border-radius: $radius-sm;
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
-@mixin flex-center {
-  display: flex; align-items: center; justify-content: center;
+// -----------------------------------------------------------------------------
+// 3. TEXT TRUNCATION
+// Usage:  @include truncate;
+//         @include truncate(2);  // 2-line clamp
+// -----------------------------------------------------------------------------
+@mixin truncate($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
-@mixin flex-between {
-  display: flex; align-items: center; justify-content: space-between;
+// -----------------------------------------------------------------------------
+// 4. CUSTOM SCROLLBAR
+// Usage:  @include custom-scrollbar;
+//         @include custom-scrollbar($width: 4px, $track: transparent, $thumb: $surface-5);
+// -----------------------------------------------------------------------------
+@mixin custom-scrollbar(
+  $width:  6px,
+  $track:  $surface-2,
+  $thumb:  $surface-5,
+  $hover:  $surface-6
+) {
+  scrollbar-width: thin;
+  scrollbar-color: $thumb $track;
+
+  &::-webkit-scrollbar        { width: $width; height: $width; }
+  &::-webkit-scrollbar-track  { background: $track; border-radius: $radius-full; }
+  &::-webkit-scrollbar-thumb  {
+    background: $thumb;
+    border-radius: $radius-full;
+    &:hover { background: $hover; }
+  }
 }
 
-@mixin line-clamp($lines: 1) {
-  display: -webkit-box;
-  -webkit-line-clamp: $lines;
-  -webkit-box-orient: vertical;
+// -----------------------------------------------------------------------------
+// 5. FLEX HELPERS
+// Usage:  @include flex-center;
+//         @include flex-between;
+// -----------------------------------------------------------------------------
+@mixin flex-center($gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @if $gap > 0 { gap: $gap; }
+}
+
+@mixin flex-between($gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @if $gap > 0 { gap: $gap; }
+}
+
+@mixin flex-start($gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  @if $gap > 0 { gap: $gap; }
+}
+
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  @if $gap > 0 { gap: $gap; }
+}
+
+// -----------------------------------------------------------------------------
+// 6. VISUALLY HIDDEN (accessible, screen-reader visible)
+// -----------------------------------------------------------------------------
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
-@mixin glass-effect($bg-opacity: 0.8) {
-  background: rgba(10, 10, 10, $bg-opacity);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+// -----------------------------------------------------------------------------
+// 7. CARD / PANEL  — shared surface elevation
+// Usage:  @include card;
+//         @include card($padding: $space-6, $hover: true);
+// -----------------------------------------------------------------------------
+@mixin card($padding: $space-4, $hover: false) {
+  background: $surface-2;
+  border: $border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  @if $padding > 0 { padding: $padding; }
 
-@mixin focus-ring($color: $color-focus-ring) {
-  &:focus-visible { outline: none; box-shadow: 0 0 0 3px $color; }
-}
-
-@mixin custom-scrollbar {
-  &::-webkit-scrollbar { width: 6px; height: 6px; }
-  &::-webkit-scrollbar-track { background: $color-surface-1; }
-  &::-webkit-scrollbar-thumb {
-    background: $color-surface-3; border-radius: $radius-full;
-    &:hover { background: $color-surface-4; }
+  @if $hover {
+    transition: box-shadow $transition-base,
+                border-color $transition-base,
+                transform $transition-base;
+    &:hover {
+      box-shadow: $shadow-card-lg;
+      border-color: $surface-6;
+      transform: translateY(-1px);
+    }
   }
 }
 
-@mixin hover-transition {
-  transition: background-color $transition-base, border-color $transition-base, transform $transition-base, box-shadow $transition-base;
+// -----------------------------------------------------------------------------
+// 8. STATUS BADGE COLORS
+// Generates color + bg + border for a given status key from $status-map.
+// Usage:  @include status-badge('delivered');
+// -----------------------------------------------------------------------------
+@mixin status-badge($key) {
+  $val: map-get($status-map, $key);
+  @if $val {
+    color:            nth($val, 1);
+    background-color: nth($val, 2);
+    border-color:     nth($val, 3);
+  } @else {
+    @warn "status-badge: unknown key '#{$key}'";
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 9. OVERLAY BACKDROP
+// -----------------------------------------------------------------------------
+@mixin overlay($opacity: 0.6, $z: $z-overlay) {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, $opacity);
+  backdrop-filter: blur(2px);
+  z-index: $z;
+}
+
+// -----------------------------------------------------------------------------
+// 10. SKELETON / SHIMMER LOADING
+// Usage:  @include skeleton($height: 16px, $width: 100%);
+// -----------------------------------------------------------------------------
+@mixin skeleton($height: 1rem, $width: 100%, $radius: $radius-sm) {
+  width: $width;
+  height: $height;
+  border-radius: $radius;
+  background: linear-gradient(
+    90deg,
+    $surface-3 25%,
+    $surface-4 50%,
+    $surface-3 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+// shimmer keyframe referenced by @include skeleton
+// (defined in _animations.scss; kept here for mixin completeness)
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+// -----------------------------------------------------------------------------
+// 11. INPUT BASE — shared between Input, Select, Textarea
+// -----------------------------------------------------------------------------
+@mixin input-base {
+  display: block;
+  width: 100%;
+  height: $input-height;
+  padding: $input-padding-y $input-padding-x;
+  background: $input-bg;
+  border: $input-border;
+  border-radius: $input-radius;
+  color: $ink-default;
+  font-family: $font-body;
+  font-size: $text-sm;
+  line-height: $line-height-base;
+  transition: $input-transition;
+  appearance: none;
+
+  &::placeholder { color: $ink-faint; }
+
+  &:hover:not(:disabled):not(:focus) {
+    border-color: $surface-6;
+    background: $surface-4;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $brand-color;
+    box-shadow: 0 0 0 3px $brand-color-light;
+    background: $surface-3;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid='true'],
+  &.error {
+    border-color: $danger;
+    &:focus { box-shadow: 0 0 0 3px $danger-subtle; }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 12. BUTTON BASE — shared between all button variants
+// -----------------------------------------------------------------------------
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  border: none;
+  border-radius: $radius-sm;
+  font-family: $font-body;
+  font-weight: $fw-medium;
+  font-size: $text-sm;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: background-color $transition-fast,
+              color $transition-fast,
+              border-color $transition-fast,
+              box-shadow $transition-fast,
+              transform $transition-fast;
+
+  &:active:not(:disabled) { transform: scale(0.98); }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  @include focus-ring;
+}
+
+// -----------------------------------------------------------------------------
+// 13. ADMIN PAGE HEADER — consistent page-level heading region
+// Usage:  @include page-header;
+// -----------------------------------------------------------------------------
+@mixin page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  @include respond-below('sm') {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
