@@ -1,0 +1,114 @@
+// =============================================================================
+// Input — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Field wrapper (label + input + error) ────────────────────────────────────
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    width: 100%;
+  }
+  
+  // ── Label ─────────────────────────────────────────────────────────────────────
+  .label {
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: $ink-muted;
+    line-height: 1.4;
+    user-select: none;
+  }
+  
+  .required::after {
+    content: ' *';
+    color: $danger;
+    font-weight: $fw-regular;
+  }
+  
+  // ── Input wrapper (holds adornments + the native input) ───────────────────────
+  .wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  // ── Native input ──────────────────────────────────────────────────────────────
+  .input {
+    @include input-base;
+  
+    // Adornment padding overrides — applied via .hasLeft / .hasRight on wrapper
+    .hasLeft  & { padding-left:  $space-8; }
+    .hasRight & { padding-right: $space-8; }
+  }
+  
+  // Size overrides
+  .lg .input {
+    height: $input-height-lg;
+    font-size: $text-base;
+    padding: $space-3 $space-4;
+  }
+  
+  // Error state
+  .error .input {
+    border-color: $danger;
+    background: rgba($danger, 0.04);
+  
+    &:focus {
+      box-shadow: 0 0 0 3px $danger-subtle;
+      border-color: $danger;
+    }
+  }
+  
+  // ── Adornments (icons / prefix text placed inside the input box) ──────────────
+  .adornment {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $ink-muted;
+    pointer-events: none;
+    width: $space-8;
+    font-size: $text-sm;
+  
+    // If adornment is a button/interactive element
+    &.interactive { pointer-events: auto; }
+  
+    svg { width: 15px; height: 15px; flex-shrink: 0; }
+  }
+  
+  .adornmentLeft  { left: 0; }
+  .adornmentRight { right: 0; }
+  
+  // ── Error message ─────────────────────────────────────────────────────────────
+  .errorMsg {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $text-xs;
+    color: $danger;
+    line-height: 1.4;
+    animation: fade-down $duration-base $ease-out both;
+  }
+  
+  // ── Hint ──────────────────────────────────────────────────────────────────────
+  .hint {
+    font-size: $text-xs;
+    color: $ink-faint;
+    line-height: 1.4;
+  }
+  
+  // ── Character count ───────────────────────────────────────────────────────────
+  .charCount {
+    font-size: $text-xs;
+    color: $ink-faint;
+    text-align: right;
+    margin-top: $space-1;
+  
+    &.near   { color: $warning; }
+    &.over   { color: $danger; }
+  }
