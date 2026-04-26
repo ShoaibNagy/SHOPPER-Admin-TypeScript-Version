@@ -1,0 +1,313 @@
+// =============================================================================
+// Sidebar — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Local token for logo hover glow
+$shadow-glow-brand: 0 0 20px rgba($brand-color, 0.5);
+
+// ── Root ──────────────────────────────────────────────────────────────────────
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: $sidebar-width;
+    height: 100%;
+    background: $surface-1;
+    border-right: $border;
+    box-shadow: $shadow-sidebar;
+    overflow: hidden;
+    transition: width $sidebar-transition $ease-out-expo;
+  
+    // Collapsed: shrink to icon-only width
+    .collapsed & {
+      width: $sidebar-width-collapsed;
+    }
+  }
+  
+  // ── Logo area ─────────────────────────────────────────────────────────────────
+  .logo {
+    @include flex-start($gap: $space-3);
+    height: $topbar-height;
+    padding: 0 $space-4;
+    border-bottom: $border;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-decoration: none;
+  
+    .collapsed & {
+      padding: 0;
+      justify-content: center;
+    }
+  }
+  
+  .logoMark {
+    width: 28px;
+    height: 28px;
+    background: $brand-color;
+    border-radius: $radius-sm;
+    @include flex-center;
+    flex-shrink: 0;
+    color: $ink-inverted;
+    font-family: $font-display;
+    font-size: $text-sm;
+    font-weight: $fw-black;
+    letter-spacing: -0.04em;
+    transition: box-shadow $transition-base;
+  
+    .logo:hover & {
+      box-shadow: $shadow-glow-brand;
+    }
+  }
+  
+  .logoText {
+    font-family: $font-display;
+    font-size: $text-sm;
+    font-weight: $fw-bold;
+    color: $ink-default;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity $duration-fast $ease-out;
+  
+    span { color: $brand-color; }
+  
+    .collapsed & {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  
+  // ── Navigation ────────────────────────────────────────────────────────────────
+  .nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: $space-3 $space-2;
+    @include custom-scrollbar($width: 3px, $track: transparent);
+  
+    .collapsed & {
+      padding: $space-3 $space-2;
+    }
+  }
+  
+  // ── Section label ─────────────────────────────────────────────────────────────
+  .sectionLabel {
+    padding: $space-3 $space-2 $space-1;
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    color: $ink-faint;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    opacity: 1;
+    transition: opacity $duration-fast $ease-out;
+  
+    .collapsed & { opacity: 0; height: 0; padding: 0; overflow: hidden; }
+  }
+  
+  // ── Nav link ──────────────────────────────────────────────────────────────────
+  .link {
+    position: relative;
+    @include flex-start($gap: $space-3);
+    width: 100%;
+    height: 36px;
+    padding: 0 $space-3;
+    border-radius: $radius-sm;
+    color: $ink-muted;
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
+  
+    &:hover {
+      background: $surface-3;
+      color: $ink-default;
+    }
+  
+    // Active link
+    &.active {
+      background: $brand-color-light;
+      color: $brand-color;
+  
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 4px;
+        bottom: 4px;
+        width: 3px;
+        background: $brand-color;
+        border-radius: 0 $radius-full $radius-full 0;
+      }
+  
+      .linkIcon { color: $brand-color; }
+    }
+  
+    @include focus-ring;
+  
+    // Collapsed: centre the icon, hide the label
+    .collapsed & {
+      justify-content: center;
+      padding: 0;
+      width: 40px;
+      margin: 0 auto;
+    }
+  }
+  
+  .linkIcon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: color $transition-fast;
+    color: inherit;
+  }
+  
+  .linkLabel {
+    flex: 1;
+    @include truncate;
+    transition: opacity $duration-fast $ease-out, width $duration-fast $ease-out;
+  
+    .collapsed & {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+  }
+  
+  .linkBadge {
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    color: $ink-inverted;
+    background: $brand-color;
+    padding: 1px 6px;
+    border-radius: $radius-full;
+    line-height: 1.6;
+    flex-shrink: 0;
+    transition: opacity $duration-fast $ease-out;
+  
+    .collapsed & { opacity: 0; width: 0; overflow: hidden; padding: 0; }
+  }
+  
+  // ── Bottom section (collapse toggle + user avatar) ────────────────────────────
+  .bottom {
+    flex-shrink: 0;
+    border-top: $border;
+    padding: $space-3 $space-2;
+    @include flex-column($gap: $space-2);
+  }
+  
+  // Collapse toggle button
+  .collapseBtn {
+    @include button-base;
+    @include flex-start($gap: $space-3);
+    width: 100%;
+    height: 36px;
+    padding: 0 $space-3;
+    border-radius: $radius-sm;
+    color: $ink-muted;
+    font-size: $text-sm;
+  
+    &:hover {
+      background: $surface-3;
+      color: $ink-default;
+    }
+  
+    @include focus-ring;
+  
+    .collapsed & {
+      justify-content: center;
+      padding: 0;
+      width: 40px;
+      margin: 0 auto;
+    }
+  }
+  
+  .collapseIcon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform $sidebar-transition $ease-out-expo;
+  
+    .collapsed & { transform: rotate(180deg); }
+  }
+  
+  .collapseBtnLabel {
+    @include truncate;
+    transition: opacity $duration-fast $ease-out;
+  
+    .collapsed & { opacity: 0; width: 0; overflow: hidden; }
+  }
+  
+  // ── User row ──────────────────────────────────────────────────────────────────
+  .user {
+    @include flex-start($gap: $space-3);
+    padding: $space-2 $space-3;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+    text-decoration: none;
+    overflow: hidden;
+  
+    &:hover { background: $surface-3; }
+    @include focus-ring;
+  
+    .collapsed & {
+      justify-content: center;
+      padding: $space-2 0;
+    }
+  }
+  
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-full;
+    background: $brand-color-light;
+    border: 1px solid rgba($brand-color, 0.3);
+    @include flex-center;
+    flex-shrink: 0;
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    color: $brand-color;
+    overflow: hidden;
+  
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  .userInfo {
+    flex: 1;
+    min-width: 0;
+    transition: opacity $duration-fast $ease-out;
+  
+    .collapsed & { opacity: 0; width: 0; overflow: hidden; }
+  }
+  
+  .userName {
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: $ink-default;
+    @include truncate;
+  }
+  
+  .userRole {
+    font-size: $text-xs;
+    color: $ink-muted;
+    text-transform: capitalize;
+  }
+  
+  // ── Tooltip on collapsed links ────────────────────────────────────────────────
+  // Shown via CSS :has or data attribute — simple approach using title attribute
+  // (browsers show native tooltip; custom one can be added later)
