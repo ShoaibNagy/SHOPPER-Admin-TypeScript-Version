@@ -1,0 +1,108 @@
+// =============================================================================
+// AdminLayout — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Root shell ────────────────────────────────────────────────────────────────
+// CSS Grid: sidebar column + content column.
+// The sidebar column width is driven by a CSS custom property so the
+// collapse animation can be a single transition on one value.
+.shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: $topbar-height 1fr;
+    grid-template-areas:
+      'sidebar topbar'
+      'sidebar content';
+    min-height: 100dvh;
+    background: $surface-base;
+    transition: grid-template-columns $sidebar-transition $ease-out-expo;
+  
+    &.collapsed {
+      grid-template-columns: $sidebar-width-collapsed 1fr;
+    }
+  
+    // Mobile: sidebar is off-canvas
+    @include respond-below('lg') {
+      grid-template-columns: 0 1fr;
+      grid-template-areas:
+        'topbar topbar'
+        'content content';
+  
+      &.sidebarOpen {
+        grid-template-areas:
+          'topbar topbar'
+          'content content';
+      }
+    }
+  }
+  
+  // ── Sidebar column ────────────────────────────────────────────────────────────
+  .sidebarArea {
+    grid-area: sidebar;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    z-index: $z-sidebar;
+    overflow: hidden; // clips text during collapse animation
+  
+    @include respond-below('lg') {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: $sidebar-width;
+      transform: translateX(-100%);
+      transition: transform $sidebar-transition $ease-out-expo;
+      box-shadow: $shadow-sidebar;
+  
+      .sidebarOpen & {
+        transform: translateX(0);
+      }
+    }
+  }
+  
+  // ── Mobile overlay backdrop ───────────────────────────────────────────────────
+  .mobileOverlay {
+    display: none;
+  
+    @include respond-below('lg') {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: #{$z-sidebar - 1};
+      animation: fade-in $duration-base $ease-out both;
+    }
+  }
+  
+  // ── Topbar row ────────────────────────────────────────────────────────────────
+  .topbarArea {
+    grid-area: topbar;
+    position: sticky;
+    top: 0;
+    z-index: $z-topbar;
+    height: $topbar-height;
+  }
+  
+  // ── Main content ──────────────────────────────────────────────────────────────
+  .main {
+    grid-area: content;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0; // prevent grid blowout
+    @include custom-scrollbar;
+  }
+  
+  .inner {
+    padding: $content-padding-y $content-padding-x;
+    max-width: $content-max-width;
+    margin: 0 auto;
+    animation: fade-up $duration-slow $ease-out both;
+  
+    @include respond-below('sm') {
+      padding: $space-4;
+    }
+  }
