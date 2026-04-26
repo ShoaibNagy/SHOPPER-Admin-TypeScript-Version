@@ -1,31 +1,33 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss()],
+
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@api': path.resolve(__dirname, './src/api'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@store': path.resolve(__dirname, './src/store'),
-      '@types': path.resolve(__dirname, './src/types'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@styles': path.resolve(__dirname, './src/styles'),
+      '@':            path.resolve(__dirname, './src'),
+      '@api':         path.resolve(__dirname, './src/api'),
+      '@components':  path.resolve(__dirname, './src/components'),
+      '@hooks':       path.resolve(__dirname, './src/hooks'),
+      '@pages':       path.resolve(__dirname, './src/pages'),
+      '@store':       path.resolve(__dirname, './src/store'),
+      '@styles':      path.resolve(__dirname, './src/styles'),
+      '@types':       path.resolve(__dirname, './src/types'),
+      '@utils':       path.resolve(__dirname, './src/utils'),
+      '@router':      path.resolve(__dirname, './src/router'),
     },
   },
+
   css: {
     preprocessorOptions: {
       scss: {
-        api: 'modern-compiler', // Use Dart Sass modern API
+        // Auto-inject SCSS design tokens into every CSS Module,
+        // so components can use $admin-sidebar-width, respond-to(), etc.
+        // without a manual @use statement.
         additionalData: `
           @use "@/styles/variables" as *;
           @use "@/styles/mixins" as *;
@@ -33,36 +35,31 @@ export default defineConfig({
       },
     },
   },
+
   server: {
-    port: 3000,
-    open: true,
+    port: 5124, // distinct from the storefront (5123)
     proxy: {
-      // Proxy API requests to backend during development
       '/api': {
-        target: process.env.VITE_API_BASE_URL || 'http://localhost:5000',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
       },
     },
   },
+
   build: {
-    outDir: 'dist',
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/recharts')) {
-            return 'charts';
-          }
-
-          if (
-            id.includes('node_modules/react/') ||
-            id.includes('node_modules/react-dom/')
-          ) {
-            return 'vendor';
-          }
+        manualChunks: (id: string) => {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) return 'react';
+          if (id.includes('node_modules/react-router-dom/')) return 'router';
+          if (id.includes('@tanstack/react-query')) return 'query';
+          if (id.includes('node_modules/recharts/')) return 'recharts';
+          if (id.includes('node_modules/zustand/')) return 'zustand';
+          return undefined;
         },
       },
     },
   },
-})
+});
