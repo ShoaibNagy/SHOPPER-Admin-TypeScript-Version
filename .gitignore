@@ -8,6 +8,7 @@ dist-ssr/
 # Environment files
 .env
 .env.*
+*.d.ts
 
 # CSS Files
 *.css.map
