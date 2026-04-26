@@ -1,0 +1,69 @@
+// =============================================================================
+// Spinner — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  
+  // ── Inline ────────────────────────────────────────────────────────────────────
+  .inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .ring {
+    display: block;
+  }
+  
+  // ── Overlay — covers nearest positioned ancestor ──────────────────────────────
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($surface-2, 0.75);
+    backdrop-filter: blur(2px);
+    z-index: $z-raised;
+    border-radius: inherit;
+    animation: fade-in $duration-base $ease-out both;
+  }
+  
+  .overlayCard {
+    @include flex-column($gap: $space-2);
+    align-items: center;
+  }
+  
+  .overlayLabel {
+    font-size: $text-xs;
+    color: $ink-muted;
+    font-family: $font-body;
+  }
+  
+  // ── Page — full content area centered ────────────────────────────────────────
+  .page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $space-3;
+    min-height: 320px;
+    width: 100%;
+    animation: fade-in $duration-slow $ease-out both;
+  }
+  
+  .pageLabel {
+    font-size: $text-sm;
+    color: $ink-muted;
+    font-family: $font-body;
+  }
+  
+  // ── Screen-reader only label ──────────────────────────────────────────────────
+  .srOnly { @include visually-hidden; }
