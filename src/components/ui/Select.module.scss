@@ -1,0 +1,222 @@
+// =============================================================================
+// Select — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Field wrapper ─────────────────────────────────────────────────────────────
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    width: 100%;
+  }
+  
+  .label {
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: $ink-muted;
+    user-select: none;
+  }
+  
+  .required::after {
+    content: ' *';
+    color: $danger;
+    font-weight: $fw-regular;
+  }
+  
+  // ── Trigger button ────────────────────────────────────────────────────────────
+  .trigger {
+    @include flex-between;
+    @include focus-ring;
+    width: 100%;
+    height: $input-height;
+    padding: $input-padding-y $input-padding-x;
+    background: $input-bg;
+    border: $input-border;
+    border-radius: $input-radius;
+    color: $ink-default;
+    font-family: $font-body;
+    font-size: $text-sm;
+    text-align: left;
+    cursor: pointer;
+    transition: $input-transition;
+    gap: $space-2;
+  
+    &:hover:not(:disabled):not(.open) {
+      border-color: $surface-6;
+      background: $surface-4;
+    }
+  
+    &.open {
+      border-color: $brand-color;
+      box-shadow: 0 0 0 3px $brand-color-light;
+      background: $surface-3;
+    }
+  
+    &.error {
+      border-color: $danger;
+      &.open { box-shadow: 0 0 0 3px $danger-subtle; }
+    }
+  
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+  
+  .lg .trigger {
+    height: $input-height-lg;
+    font-size: $text-base;
+    padding: $space-3 $space-4;
+  }
+  
+  .triggerValue {
+    flex: 1;
+    @include truncate;
+  }
+  
+  .triggerPlaceholder {
+    flex: 1;
+    color: $ink-faint;
+    @include truncate;
+  }
+  
+  .triggerChevron {
+    flex-shrink: 0;
+    color: $ink-muted;
+    transition: transform $duration-base $ease-out-back;
+  
+    .open & { transform: rotate(180deg); }
+  }
+  
+  // ── Dropdown panel ────────────────────────────────────────────────────────────
+  .dropdown {
+    position: absolute;
+    top: calc(100% + $space-1);
+    left: 0;
+    right: 0;
+    z-index: $z-dropdown;
+    background: $surface-2;
+    border: $border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-dropdown;
+    overflow: hidden;
+    animation: scale-in $duration-base $ease-out-back both;
+    transform-origin: top center;
+  
+    // Upward variant (when near bottom of viewport)
+    &.dropUp {
+      top: auto;
+      bottom: calc(100% + $space-1);
+      transform-origin: bottom center;
+      animation-name: scale-in-up;
+    }
+  }
+  
+  @keyframes scale-in-up {
+    from { opacity: 0; transform: scale(0.95) translateY(4px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+  
+  // ── Container (positions dropdown relative to trigger) ────────────────────────
+  .container {
+    position: relative;
+  }
+  
+  // ── Search input inside dropdown ──────────────────────────────────────────────
+  .search {
+    padding: $space-2;
+    border-bottom: $border;
+  
+    input {
+      @include input-base;
+      height: 30px;
+      font-size: $text-sm;
+      background: $surface-3;
+    }
+  }
+  
+  // ── Options list ──────────────────────────────────────────────────────────────
+  .list {
+    max-height: 220px;
+    overflow-y: auto;
+    @include custom-scrollbar($width: 4px);
+    padding: $space-1 0;
+  }
+  
+  // ── Group ─────────────────────────────────────────────────────────────────────
+  .group + .group { border-top: $border; margin-top: $space-1; padding-top: $space-1; }
+  
+  .groupLabel {
+    padding: $space-2 $space-3 $space-1;
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    color: $ink-faint;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    user-select: none;
+  }
+  
+  // ── Single option ─────────────────────────────────────────────────────────────
+  .option {
+    @include flex-between;
+    width: 100%;
+    padding: $space-2 $space-3;
+    font-size: $text-sm;
+    color: $ink-default;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color $transition-fast;
+    gap: $space-2;
+  
+    &:hover, &.focused {
+      background: $surface-3;
+    }
+  
+    &.selected {
+      background: $brand-color-light;
+      color: $brand-color;
+      font-weight: $fw-medium;
+    }
+  
+    &.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+  
+  .optionCheck {
+    flex-shrink: 0;
+    color: $brand-color;
+    opacity: 0;
+  
+    .selected & { opacity: 1; }
+  }
+  
+  // ── Empty state ───────────────────────────────────────────────────────────────
+  .empty {
+    padding: $space-6 $space-4;
+    text-align: center;
+    font-size: $text-sm;
+    color: $ink-faint;
+  }
+  
+  // ── Error / hint ──────────────────────────────────────────────────────────────
+  .errorMsg {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $text-xs;
+    color: $danger;
+    animation: fade-down $duration-base $ease-out both;
+  }
+  
+  .hint {
+    font-size: $text-xs;
+    color: $ink-faint;
+  }
