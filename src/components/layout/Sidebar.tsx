@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { useLayout } from './AdminLayout';
+import { useLayout } from './AdminLayoutContext';
 import { useAdminAuth } from '@hooks/useAdminAuth';
 import s from './Sidebar.module.scss';
 

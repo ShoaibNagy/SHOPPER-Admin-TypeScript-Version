@@ -1,28 +1,10 @@
-import { useState, createContext, useContext, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { LayoutContext } from './AdminLayoutContext';
 import s from './AdminLayout.module.scss';
-
-// ---------------------------------------------------------------------------
-// Layout context — shared between AdminLayout, Sidebar, Topbar
-// ---------------------------------------------------------------------------
-interface LayoutContextValue {
-  collapsed:     boolean;
-  toggleCollapse: () => void;
-  mobileOpen:    boolean;
-  toggleMobile:  () => void;
-  closeMobile:   () => void;
-}
-
-const LayoutContext = createContext<LayoutContextValue | null>(null);
-
-export function useLayout(): LayoutContextValue {
-  const ctx = useContext(LayoutContext);
-  if (!ctx) throw new Error('useLayout must be used inside <AdminLayout>');
-  return ctx;
-}
 
 // ---------------------------------------------------------------------------
 // AdminLayout

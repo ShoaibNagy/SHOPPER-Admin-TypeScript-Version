@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { useLayout } from './AdminLayout';
+import { useLayout } from './AdminLayoutContext';
 import { useAdminAuth } from '@hooks/useAdminAuth';
 import s from './Topbar.module.scss';
 
@@ -28,11 +28,12 @@ function getPageTitle(pathname: string): string {
 // Topbar
 // ---------------------------------------------------------------------------
 export function Topbar() {
-  const { toggleMobile }           = useLayout();
-  const { admin, logout, isLoggingOut } = useAdminAuth();
-  const location                    = useLocation();
-  const [menuOpen, setMenuOpen]     = useState(false);
-  const menuRef                     = useRef<HTMLDivElement>(null);
+  const { toggleMobile }                 = useLayout();
+  const { admin, logout, isLoggingOut }  = useAdminAuth();
+  const location                         = useLocation();
+  const [openMenuPath, setOpenMenuPath] = useState<string | null>(null);
+  const menuRef                          = useRef<HTMLDivElement>(null);
+  const menuOpen                         = openMenuPath === location.pathname;
 
   const pageTitle = getPageTitle(location.pathname);
 
@@ -40,14 +41,11 @@ export function Topbar() {
   useEffect(() => {
     if (!menuOpen) return;
     function onOutside(e: MouseEvent) {
-      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+      if (!menuRef.current?.contains(e.target as Node)) setOpenMenuPath(null);
     }
     document.addEventListener('mousedown', onOutside);
     return () => document.removeEventListener('mousedown', onOutside);
   }, [menuOpen]);
-
-  // Close on route change
-  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   const initials = admin?.name
     .split(' ')
@@ -96,7 +94,7 @@ export function Topbar() {
         <div className={s.menuWrapper} ref={menuRef}>
           <button
             className={s.avatarBtn}
-            onClick={() => setMenuOpen(o => !o)}
+            onClick={() => setOpenMenuPath(p => (p === location.pathname ? null : location.pathname))}
             aria-label="User menu"
             aria-expanded={menuOpen}
             aria-haspopup="menu"
@@ -124,7 +122,7 @@ export function Topbar() {
                   to="/profile"
                   className={s.menuItem}
                   role="menuitem"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={() => setOpenMenuPath(null)}
                 >
                   <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="8" cy="5" r="3" />
@@ -137,7 +135,7 @@ export function Topbar() {
 
                 <button
                   className={clsx(s.menuItem, s.menuItemDanger)}
-                  onClick={() => { setMenuOpen(false); void logout(); }}
+                  onClick={() => { setOpenMenuPath(null); void logout(); }}
                   disabled={isLoggingOut}
                   role="menuitem"
                   type="button"
