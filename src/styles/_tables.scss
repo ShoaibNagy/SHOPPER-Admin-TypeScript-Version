@@ -1,53 +1,138 @@
+// =============================================================================
+// SHOPPER ADMIN — Global Table Base
+// =============================================================================
+// These styles provide the baseline for all data tables.
+// Each table component's CSS Module overrides specifics via composition.
+// =============================================================================
+
 @use 'variables' as *;
 @use 'mixins' as *;
 
-.admin-table-container {
-    width: 100%;
-    overflow-x: auto;
-    @include custom-scrollbar;
-    border: 1px solid $color-border;
-    border-radius: $radius-xl;
-    background-color: $color-surface-1;
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  @include custom-scrollbar($width: 4px);
+  border: $border;
+  border-radius: $radius-md;
+  background: $surface-2;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 640px;
+  font-size: $text-sm;
+  font-family: $font-body;
+  border-collapse: collapse;
+
+  // ── Header ────────────────────────────────────────────────
+  thead {
+    background: $surface-3;
+    position: sticky;
+    top: 0;
+    z-index: $z-raised;
+
+    tr {
+      border-bottom: $table-border;
+    }
+
+    th {
+      height: $table-header-height;
+      padding: 0 $table-cell-px;
+      text-align: left;
+      font-size: $text-xs;
+      font-weight: $fw-semibold;
+      color: $ink-muted;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      user-select: none;
+
+      // Sortable column indicator
+      &[data-sortable] {
+        cursor: pointer;
+        transition: color $transition-fast;
+
+        &:hover { color: $ink-default; }
+
+        &[data-sort='asc']::after  { content: ' ↑'; color: $brand-color; }
+        &[data-sort='desc']::after { content: ' ↓'; color: $brand-color; }
+      }
+    }
   }
-  
-  .admin-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-  
-    thead th {
-      position: sticky; top: 0; z-index: $z-sticky;
-      background-color: $color-surface-2;
-      padding: $space-3 $space-4;
-      text-align: left; font-size: 0.75rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      color: $color-text-secondary;
-      border-bottom: 1px solid $color-border;
+
+  // ── Body ──────────────────────────────────────────────────
+  tbody {
+    tr {
+      height: $table-row-height;
+      border-bottom: 1px solid $surface-3;
+      transition: background-color $transition-fast;
+
+      // Zebra striping
+      &:nth-child(even) { background: $table-stripe-bg; }
+
+      // Row hover
+      &:hover { background: $table-hover-bg; }
+
+      // Selected row
+      &[aria-selected='true'],
+      &.selected {
+        background: rgba($brand-color, 0.07);
+        border-color: rgba($brand-color, 0.15);
+      }
+
+      // Last row — no bottom border
+      &:last-child { border-bottom: none; }
     }
-  
-    tbody tr {
-      transition: background-color $transition-base;
-      &:hover { background-color: $color-surface-2; }
-      &:not(:last-child) td { border-bottom: 1px solid $color-border; }
-      &.table-row-zebra:nth-child(even) { background-color: rgba(255, 255, 255, 0.02); }
-    }
-  
+
     td {
-      padding: $space-4; font-size: 0.875rem;
-      color: $color-text-primary; vertical-align: middle;
-    }
-  
-    .cell-checkbox { width: 48px; text-align: center; }
-    .cell-actions { text-align: right; white-space: nowrap; }
-  }
-  
-  // Mobile responsive table fallback
-  @media (max-width: 768px) {
-    .admin-table {
-      thead { display: none; }
-      tbody, tr, td { display: block; width: 100%; }
-      tr { margin-bottom: $space-4; padding: $space-3; border: 1px solid $color-border; border-radius: $radius-lg; }
-      td { border-bottom: none; padding: $space-2 0; display: flex; justify-content: space-between; align-items: center; }
-      td::before { content: attr(data-label); font-weight: 600; color: $color-text-secondary; margin-right: $space-4; }
+      padding: 0 $table-cell-px;
+      color: $ink-default;
+      vertical-align: middle;
+
+      // Muted secondary cell value
+      &.muted { color: $ink-muted; }
+
+      // Numeric / mono cell (IDs, prices, counts)
+      &.mono {
+        font-family: $font-mono;
+        font-size: $text-xs;
+        color: $ink-muted;
+        letter-spacing: 0.01em;
+      }
     }
   }
+
+  // ── Footer / pagination row ────────────────────────────────
+  tfoot {
+    tr {
+      border-top: $table-border;
+      background: $surface-3;
+    }
+    td {
+      padding: $space-3 $table-cell-px;
+      font-size: $text-xs;
+      color: $ink-muted;
+    }
+  }
+}
+
+// ── Empty state ────────────────────────────────────────────
+.admin-table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  padding: $space-12 $space-4;
+  color: $ink-muted;
+  font-size: $text-sm;
+  text-align: center;
+
+  svg { opacity: 0.3; }
+}
+
+// ── Bulk-select checkbox column ────────────────────────────
+.admin-table-check {
+  width: 44px;
+  padding-left: $space-4 !important;
+}
