@@ -1,28 +1,106 @@
-@use 'variables' as *;
-@use 'mixins' as *;
+// =============================================================================
+// SHOPPER ADMIN — Typography
+// =============================================================================
 
+@use 'variables' as *;
+
+// Google Fonts import (Unbounded + DM Sans + JetBrains Mono)
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+// -----------------------------------------------------------------------------
+// Heading defaults
+// -----------------------------------------------------------------------------
 h1, h2, h3, h4, h5, h6 {
-    font-family: $font-display;
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-  
-  .heading-xl { font-size: 3rem; font-weight: 900; letter-spacing: -0.04em; }
-  .heading-lg { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.03em; }
-  .heading-md { font-size: 1.5rem; font-weight: 600; }
-  .heading-sm { font-size: 1.125rem; font-weight: 600; }
-  
-  .body-lg { font-size: 1.125rem; line-height: 1.6; }
-  .body-md { font-size: 1rem; line-height: 1.65; }
-  .body-sm { font-size: 0.875rem; line-height: 1.5; }
-  .body-xs { font-size: 0.75rem; line-height: 1.4; color: $color-text-muted; }
-  
-  .text-brand { color: $color-brand-orange; }
-  .text-success { color: $color-success; }
-  .text-warning { color: $color-warning; }
-  .text-danger { color: $color-danger; }
-  .text-muted { color: $color-text-muted; }
-  .text-secondary { color: $color-text-secondary; }
-  
-  a:hover { color: $color-brand-orange; }
+  font-family: $font-body;
+  font-weight: $fw-semibold;
+  color: $ink-default;
+  line-height: 1.25;
+  margin: 0;
+}
+
+h1 { font-size: $text-3xl; font-family: $font-display; font-weight: $fw-bold; }
+h2 { font-size: $text-2xl; }
+h3 { font-size: $text-xl; }
+h4 { font-size: $text-lg; }
+h5 { font-size: $text-md; }
+h6 { font-size: $text-base; }
+
+p { margin: 0; }
+
+// -----------------------------------------------------------------------------
+// Admin-specific typography utilities (used in components without Tailwind)
+// -----------------------------------------------------------------------------
+
+// Page title — Unbounded, appears in topbar and page headers
+.admin-title {
+  font-family: $font-display;
+  font-size: $text-xl;
+  font-weight: $fw-bold;
+  color: $ink-default;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+// Section/card heading
+.admin-heading {
+  font-size: $text-md;
+  font-weight: $fw-semibold;
+  color: $ink-default;
+  letter-spacing: -0.01em;
+}
+
+// Body / paragraph text
+.admin-body {
+  font-size: $text-base;
+  font-weight: $fw-regular;
+  color: $ink-default;
+  line-height: $line-height-base;
+}
+
+// Muted supporting text
+.admin-body-muted {
+  font-size: $text-sm;
+  color: $ink-muted;
+  line-height: 1.4;
+}
+
+// Tiny label / caption
+.admin-caption {
+  font-size: $text-xs;
+  color: $ink-muted;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-weight: $fw-medium;
+}
+
+// Numeric value (stat cards, prices)
+.admin-stat {
+  font-family: $font-display;
+  font-size: $text-3xl;
+  font-weight: $fw-bold;
+  color: $ink-default;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+// Monospace ID / code / SKU
+.admin-mono {
+  font-family: $font-mono;
+  font-size: $text-sm;
+  color: $ink-muted;
+  letter-spacing: 0.01em;
+}
+
+// Brand-coloured label
+.admin-brand {
+  color: $brand-color;
+  font-weight: $fw-medium;
+}
+
+// Link reset
+a {
+  color: $brand-color;
+  text-decoration: none;
+  transition: color $transition-fast;
+  &:hover { color: $brand-color-hover; }
+}
