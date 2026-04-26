@@ -1,0 +1,225 @@
+// =============================================================================
+// Topbar — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.topbar {
+    @include flex-between;
+    height: $topbar-height;
+    padding: 0 $content-padding-x;
+    background: $surface-1;
+    border-bottom: $topbar-border;
+    box-shadow: $shadow-topbar;
+    gap: $space-3;
+  
+    @include respond-below('sm') {
+      padding: 0 $space-4;
+    }
+  }
+  
+  // ── Left group ────────────────────────────────────────────────────────────────
+  .left {
+    @include flex-start($gap: $space-3);
+    min-width: 0;
+  }
+  
+  // Mobile hamburger
+  .menuBtn {
+    @include button-base;
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    color: $ink-muted;
+    background: transparent;
+    flex-shrink: 0;
+  
+    // Only show on mobile
+    display: none;
+  
+    @include respond-below('lg') { display: flex; }
+  
+    &:hover { background: $surface-3; color: $ink-default; }
+    @include focus-ring;
+  }
+  
+  // Page title / breadcrumb
+  .pageTitle {
+    font-size: $text-base;
+    font-weight: $fw-semibold;
+    color: $ink-default;
+    @include truncate;
+  
+    @include respond-below('sm') {
+      font-size: $text-sm;
+    }
+  }
+  
+  .breadcrumb {
+    @include flex-start($gap: $space-1);
+    font-size: $text-sm;
+    color: $ink-muted;
+    min-width: 0;
+  
+    span { @include truncate; }
+  
+    a {
+      color: $ink-muted;
+      text-decoration: none;
+      transition: color $transition-fast;
+      &:hover { color: $ink-default; }
+    }
+  
+    .sep {
+      color: $ink-faint;
+      flex-shrink: 0;
+      font-size: $text-xs;
+    }
+  
+    .current {
+      color: $ink-default;
+      font-weight: $fw-medium;
+    }
+  }
+  
+  // ── Right group ───────────────────────────────────────────────────────────────
+  .right {
+    @include flex-start($gap: $space-2);
+    flex-shrink: 0;
+  }
+  
+  // Topbar icon button (notifications, settings, etc.)
+  .iconBtn {
+    @include button-base;
+    @include flex-center;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    color: $ink-muted;
+    background: transparent;
+  
+    &:hover { background: $surface-3; color: $ink-default; }
+    @include focus-ring;
+  }
+  
+  // Notification dot
+  .dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 6px;
+    height: 6px;
+    background: $danger;
+    border-radius: $radius-full;
+    border: 1.5px solid $surface-1;
+  }
+  
+  // ── Avatar / user menu button ─────────────────────────────────────────────────
+  .avatarBtn {
+    @include button-base;
+    @include flex-center;
+    width: 30px;
+    height: 30px;
+    border-radius: $radius-full;
+    background: $brand-color-light;
+    border: 1px solid rgba($brand-color, 0.3);
+    color: $brand-color;
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    overflow: hidden;
+    flex-shrink: 0;
+  
+    &:hover { box-shadow: 0 0 0 2px $brand-color; }
+    @include focus-ring($brand-color);
+  
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  // ── Dropdown menu ─────────────────────────────────────────────────────────────
+  .menuWrapper {
+    position: relative;
+  }
+  
+  .menu {
+    position: absolute;
+    top: calc(100% + $space-2);
+    right: 0;
+    min-width: 200px;
+    background: $surface-2;
+    border: $border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-dropdown;
+    z-index: $z-dropdown;
+    overflow: hidden;
+    animation: scale-in $duration-base $ease-out-back both;
+    transform-origin: top right;
+  }
+  
+  .menuHeader {
+    padding: $space-3 $space-4;
+    border-bottom: $border;
+  }
+  
+  .menuName {
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: $ink-default;
+  }
+  
+  .menuEmail {
+    font-size: $text-xs;
+    color: $ink-muted;
+    margin-top: 1px;
+    @include truncate;
+  }
+  
+  .menuRole {
+    display: inline-flex;
+    margin-top: $space-1;
+    font-size: $text-xs;
+    color: $brand-color;
+    background: $brand-color-light;
+    padding: 1px 6px;
+    border-radius: $radius-full;
+    font-weight: $fw-medium;
+    text-transform: capitalize;
+  }
+  
+  .menuItems {
+    padding: $space-1 0;
+  }
+  
+  .menuItem {
+    @include button-base;
+    @include flex-start($gap: $space-3);
+    width: 100%;
+    height: 36px;
+    padding: 0 $space-4;
+    font-size: $text-sm;
+    color: $ink-muted;
+    background: transparent;
+    border-radius: 0;
+  
+    &:hover { background: $surface-3; color: $ink-default; }
+    @include focus-ring;
+  
+    svg { width: 14px; height: 14px; flex-shrink: 0; }
+  }
+  
+  .menuDivider {
+    height: 1px;
+    background: $surface-5;
+    margin: $space-1 0;
+  }
+  
+  .menuItemDanger {
+    color: $danger;
+    &:hover { background: $danger-subtle; color: $danger; }
+  }
