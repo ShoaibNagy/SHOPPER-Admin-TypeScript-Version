@@ -1,28 +1,108 @@
-// Project base styles
+// =============================================================================
+// SHOPPER ADMIN — main.scss
+// =============================================================================
+// Entry point imported once in main.tsx.
+// Import order:  variables → mixins → reset → typography →
+//                animations → tables → forms → utilities
+//
+// Note: variables & mixins are ALSO injected into every CSS Module via
+//       Vite's additionalData, so components never need a manual @use.
+//       We still @use them here for the global layer.
+// =============================================================================
+
+@use './variables' as *;
+@use './mixins'    as *;
+
 @use './reset';
 @use './typography';
 @use './animations';
 @use './tables';
 @use './forms';
-@use 'variables' as *;
-@use 'mixins' as *;
 
+// =============================================================================
+// CSS CUSTOM PROPERTIES (runtime-accessible tokens)
+// =============================================================================
+// These mirror the SCSS variables so JavaScript (e.g. Recharts theme,
+// inline styles, dynamic classes) can read them via getComputedStyle.
+// =============================================================================
 
+:root {
+  /* Brand */
+  --color-brand:       #{$brand-color};
+  --color-brand-hover: #{$brand-color-hover};
+  --color-brand-light: #{$brand-color-light};
 
-// Global Utilities
-.container-admin {
-  width: 100%; max-width: 1440px;
-  margin-left: auto; margin-right: auto;
-  padding-left: $space-6; padding-right: $space-6;
+  /* Surfaces */
+  --color-surface:   #{$surface-base};
+  --color-surface-1: #{$surface-1};
+  --color-surface-2: #{$surface-2};
+  --color-surface-3: #{$surface-3};
+  --color-surface-4: #{$surface-4};
+  --color-surface-5: #{$surface-5};
+  --color-surface-6: #{$surface-6};
+
+  /* Ink */
+  --color-ink:        #{$ink-default};
+  --color-ink-muted:  #{$ink-muted};
+  --color-ink-faint:  #{$ink-faint};
+
+  /* Status */
+  --color-success: #{$success};
+  --color-warning: #{$warning};
+  --color-danger:  #{$danger};
+  --color-info:    #{$info};
+
+  /* Layout */
+  --sidebar-width:            #{$sidebar-width};
+  --sidebar-width-collapsed:  #{$sidebar-width-collapsed};
+  --topbar-height:            #{$topbar-height};
+  --content-padding-x:        #{$content-padding-x};
+  --content-padding-y:        #{$content-padding-y};
+
+  /* Fonts */
+  --font-display: #{$font-display};
+  --font-body:    #{$font-body};
+  --font-mono:    #{$font-mono};
+
+  /* Motion */
+  --duration-fast:   #{$duration-fast};
+  --duration-base:   #{$duration-base};
+  --duration-slow:   #{$duration-slow};
+  --ease-default:    #{$ease-default};
+  --ease-out-expo:   #{$ease-out-expo};
 }
 
-.glass-panel {
-  @include glass-effect(0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: $radius-xl;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+// =============================================================================
+// GLOBAL UTILITY CLASSES
+// =============================================================================
+// Keep this section small. Favour Tailwind utilities in JSX.
+// These are for cases where Tailwind's JIT can't reach (e.g. SSR, SVGs).
+// =============================================================================
+
+// Visually hidden (accessible)
+.sr-only {
+  @include visually-hidden;
 }
 
-.scrollable-area { @include custom-scrollbar; }
-.font-display { font-family: $font-display; }
-.font-body { font-family: $font-body; }
+// Custom scrollbar on the scrollable body areas
+body,
+.admin-scroll {
+  @include custom-scrollbar;
+}
+
+// React root fills the viewport
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Disable transitions during theme changes / initial paint
+.no-transition * {
+  transition: none !important;
+}
+
+// Page-level fade-in on route change
+.page-enter {
+  animation: fade-up $duration-slow $ease-out both;
+}
