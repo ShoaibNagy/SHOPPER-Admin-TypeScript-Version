@@ -1,0 +1,132 @@
+// =============================================================================
+// StatCard — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+    @include card($padding: $space-5);
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    position: relative;
+    overflow: hidden;
+    transition:
+      box-shadow $transition-base,
+      border-color $transition-base,
+      transform $transition-base;
+  
+    // Subtle top accent line
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, $brand-color 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity $transition-base;
+    }
+  
+    &:hover {
+      box-shadow: $shadow-card-lg;
+      border-color: $surface-6;
+      transform: translateY(-1px);
+  
+      &::before { opacity: 1; }
+    }
+  }
+  
+  // ── Header ────────────────────────────────────────────────────────────────────
+  .header {
+    @include flex-between;
+    gap: $space-2;
+  }
+  
+  .title {
+    font-size: $text-sm;
+    font-weight: $fw-medium;
+    color: $ink-muted;
+    letter-spacing: 0.01em;
+  }
+  
+  .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    background: $surface-3;
+    @include flex-center;
+    flex-shrink: 0;
+    color: $brand-color;
+  
+    svg { width: 16px; height: 16px; }
+  }
+  
+  // ── Value ─────────────────────────────────────────────────────────────────────
+  .value {
+    font-family: $font-display;
+    font-size: $text-3xl;
+    font-weight: $fw-bold;
+    color: $ink-default;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  
+  // ── Meta (trend + subtitle) ───────────────────────────────────────────────────
+  .meta {
+    @include flex-start($gap: $space-2);
+    flex-wrap: wrap;
+  }
+  
+  .trend {
+    @include flex-start($gap: $space-1);
+    font-size: $text-xs;
+    font-weight: $fw-semibold;
+    color: $ink-muted;
+    background: $surface-3;
+    padding: 2px $space-2;
+    border-radius: $radius-full;
+    line-height: 1.6;
+  }
+  
+  .trendArrow {
+    flex-shrink: 0;
+  }
+  
+  .trendUp {
+    color: $success;
+    background: $success-subtle;
+  }
+  
+  .trendDown {
+    color: $danger;
+    background: $danger-subtle;
+  }
+  
+  .subtitle {
+    font-size: $text-xs;
+    color: $ink-faint;
+  }
+  
+  // ── Chart slot ────────────────────────────────────────────────────────────────
+  .chart {
+    margin-top: $space-2;
+    margin-left: -$space-5;
+    margin-right: -$space-5;
+    margin-bottom: -$space-5;
+  }
+  
+  // ── Skeleton / loading ────────────────────────────────────────────────────────
+  .loading {
+    pointer-events: none;
+  }
+  
+  .skeletonValue {
+    @include skeleton($height: 36px, $width: 60%);
+  }
+  
+  .skeletonMeta {
+    @include skeleton($height: 14px, $width: 40%);
+  }
