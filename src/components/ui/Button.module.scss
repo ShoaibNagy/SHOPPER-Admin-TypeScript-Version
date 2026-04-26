@@ -1,0 +1,183 @@
+// =============================================================================
+// Button — CSS Module
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Base ──────────────────────────────────────────────────────────────────────
+.btn {
+    @include button-base;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+  
+    // Ripple layer (triggered via JS class)
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.06);
+      opacity: 0;
+      transition: opacity $transition-fast;
+      border-radius: inherit;
+    }
+    &:active:not(:disabled)::after { opacity: 1; }
+  }
+  
+  // ── Sizes ─────────────────────────────────────────────────────────────────────
+  .sm  { height: 28px; padding: 0 $space-3;  font-size: $text-xs;  gap: $space-1; }
+  .md  { height: 34px; padding: 0 $space-4;  font-size: $text-sm;  gap: $space-2; }
+  .lg  { height: 42px; padding: 0 $space-6;  font-size: $text-base; gap: $space-2; }
+  
+  // ── Variants ──────────────────────────────────────────────────────────────────
+  
+  // Primary — filled orange, the main CTA
+  .primary {
+    background: $brand-color;
+    color: $ink-inverted;
+    font-weight: $fw-semibold;
+  
+    &:hover:not(:disabled) {
+      background: $brand-color-hover;
+      box-shadow: 0 0 0 3px $brand-color-light, 0 2px 8px rgba($brand-color, 0.3);
+    }
+    &:focus-visible {
+      outline: 2px solid $brand-color;
+      outline-offset: 2px;
+    }
+  }
+  
+  // Secondary — dark surface with border, secondary actions
+  .secondary {
+    background: $surface-3;
+    color: $ink-default;
+    border: $border;
+  
+    &:hover:not(:disabled) {
+      background: $surface-4;
+      border-color: $surface-6;
+    }
+    @include focus-ring;
+  }
+  
+  // Ghost — no background, for tertiary actions inside cards/tables
+  .ghost {
+    background: transparent;
+    color: $ink-muted;
+    border: 1px solid transparent;
+  
+    &:hover:not(:disabled) {
+      background: $surface-3;
+      color: $ink-default;
+      border-color: $surface-5;
+    }
+    @include focus-ring;
+  }
+  
+  // Danger — destructive actions (delete, suspend)
+  .danger {
+    background: $danger-subtle;
+    color: $danger;
+    border: 1px solid $danger-border;
+  
+    &:hover:not(:disabled) {
+      background: $danger;
+      color: #fff;
+      border-color: $danger;
+      box-shadow: 0 0 0 3px $danger-subtle;
+    }
+    @include focus-ring($danger);
+  }
+  
+  // Danger-solid — for high-stakes confirmations inside modal
+  .dangerSolid {
+    background: $danger;
+    color: #fff;
+    font-weight: $fw-semibold;
+  
+    &:hover:not(:disabled) {
+      background: darken($danger, 8%);
+      box-shadow: 0 0 0 3px $danger-subtle;
+    }
+    @include focus-ring($danger);
+  }
+  
+  // Success — positive confirmations
+  .success {
+    background: $success-subtle;
+    color: $success;
+    border: 1px solid $success-border;
+  
+    &:hover:not(:disabled) {
+      background: $success;
+      color: #fff;
+      border-color: $success;
+    }
+    @include focus-ring($success);
+  }
+  
+  // Link — looks like a text link
+  .link {
+    background: transparent;
+    color: $brand-color;
+    height: auto;
+    padding: 0;
+    font-size: inherit;
+    font-weight: $fw-medium;
+    border-radius: $radius-xs;
+  
+    &:hover:not(:disabled) { color: $brand-color-hover; text-decoration: underline; }
+    @include focus-ring;
+  }
+  
+  // ── Modifiers ─────────────────────────────────────────────────────────────────
+  
+  // Full width
+  .fullWidth { width: 100%; }
+  
+  // Icon-only (square aspect ratio)
+  .iconOnly {
+    padding: 0;
+    &.sm  { width: 28px; }
+    &.md  { width: 34px; }
+    &.lg  { width: 42px; }
+  }
+  
+  // ── Loading state ─────────────────────────────────────────────────────────────
+  .loading {
+    cursor: wait;
+    pointer-events: none;
+  
+    .label { opacity: 0; }
+  
+    .spinner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  .spinnerRing {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: $radius-full;
+    opacity: 0.7;
+    animation: spin $duration-slow linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  // ── Icon slots ────────────────────────────────────────────────────────────────
+  .label {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+    transition: opacity $transition-fast;
+  }
