@@ -5,6 +5,7 @@ import {
     useCallback,
     useId,
     type KeyboardEvent,
+    type CSSProperties,
     type ReactNode,
   } from 'react';
   import { createPortal } from 'react-dom';
@@ -81,6 +82,12 @@ import {
     const [open,        setOpen]        = useState(false);
     const [query,       setQuery]       = useState('');
     const [focusedIdx,  setFocusedIdx]  = useState(0);
+    const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: 200,
+    });
   
     const containerRef = useRef<HTMLDivElement>(null);
     const triggerRef   = useRef<HTMLButtonElement>(null);
@@ -129,7 +136,6 @@ import {
       setOpen(false);
       setQuery('');
       setFocusedIdx(0);
-      triggerRef.current?.focus();
     }, []);
   
     useEffect(() => {
@@ -143,9 +149,37 @@ import {
       document.addEventListener('mousedown', onOutside);
       return () => document.removeEventListener('mousedown', onOutside);
     }, [open, searchable, close]);
+
+    useEffect(() => {
+      if (!open) return;
+
+      function updateDropdownPosition() {
+        const rect = containerRef.current?.getBoundingClientRect();
+        setDropdownStyle({
+          position: 'fixed',
+          top: (rect?.bottom ?? 0) + 4,
+          left: rect?.left ?? 0,
+          width: rect?.width ?? 200,
+        });
+      }
+
+      updateDropdownPosition();
+      window.addEventListener('resize', updateDropdownPosition);
+      window.addEventListener('scroll', updateDropdownPosition, true);
+      return () => {
+        window.removeEventListener('resize', updateDropdownPosition);
+        window.removeEventListener('scroll', updateDropdownPosition, true);
+      };
+    }, [open]);
+
+    useEffect(() => {
+      if (!open) {
+        triggerRef.current?.focus();
+      }
+    }, [open]);
   
     // ── Selection ───────────────────────────────────────────────────────────
-    function select(opt: SelectOption<V>) {
+    function selectOption(opt: SelectOption<V>) {
       if (opt.disabled) return;
       if (multiple) {
         const next = isSelected(opt.value)
@@ -178,7 +212,7 @@ import {
       if (e.key === 'Enter') {
         e.preventDefault();
         const opt = filtered[focusedIdx];
-        if (opt) select(opt);
+        if (opt) selectOption(opt);
       }
     }
   
@@ -210,7 +244,7 @@ import {
                     type="button"
                     data-idx={idx}
                     className={clsx(s.option, selected && s.selected, focused && s.focused, opt.disabled && s.disabled)}
-                    onClick={() => select(opt)}
+                    onClick={() => selectOption(opt)}
                     aria-selected={selected}
                     disabled={opt.disabled}
                   >
@@ -237,7 +271,7 @@ import {
             type="button"
             data-idx={idx}
             className={clsx(s.option, selected && s.selected, focused && s.focused, item.disabled && s.disabled)}
-            onClick={() => select(item)}
+            onClick={() => selectOption(item)}
             aria-selected={selected}
             disabled={item.disabled}
           >
@@ -310,13 +344,7 @@ import {
               role="listbox"
               aria-multiselectable={multiple}
               onKeyDown={handleListKey}
-              style={{
-                // Position relative to trigger
-                position: 'fixed',
-                top:  (containerRef.current?.getBoundingClientRect().bottom ?? 0) + 4,
-                left: containerRef.current?.getBoundingClientRect().left ?? 0,
-                width: containerRef.current?.getBoundingClientRect().width ?? 200,
-              }}
+              style={dropdownStyle}
             >
               {searchable && (
                 <div className={s.search}>
