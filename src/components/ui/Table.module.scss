@@ -1,0 +1,150 @@
+// =============================================================================
+// Table — CSS Module
+// =============================================================================
+// Extends the global _tables.scss base with component-specific overrides.
+// The global base classes (.admin-table, .admin-table-wrapper) are applied
+// in Table.tsx; the module adds states and compositional helpers.
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ── Outer wrapper ─────────────────────────────────────────────────────────────
+.wrapper {
+    @extend .admin-table-wrapper !optional;
+  }
+  
+  // ── Table element ─────────────────────────────────────────────────────────────
+  .table {
+    @extend .admin-table !optional;
+  }
+  
+  // ── Sortable header cell ──────────────────────────────────────────────────────
+  .sortable {
+    cursor: pointer;
+    transition: color $transition-fast;
+    user-select: none;
+  
+    &:hover { color: $ink-default; }
+  
+    .sortIcon {
+      display: inline-flex;
+      align-items: center;
+      margin-left: $space-1;
+      opacity: 0.4;
+      transition: opacity $transition-fast, transform $transition-fast;
+      vertical-align: middle;
+    }
+  
+    &.asc  .sortIcon { opacity: 1; transform: rotate(0deg); }
+    &.desc .sortIcon { opacity: 1; transform: rotate(180deg); }
+  }
+  
+  // ── Loading — skeleton rows ───────────────────────────────────────────────────
+  .skeletonRow td {
+    padding: $space-3 $table-cell-px;
+    pointer-events: none;
+  }
+  
+  .skeletonCell {
+    @include skeleton($height: 14px);
+  }
+  
+  // Vary skeleton widths so it looks natural, not copy-pasted
+  .skeletonRow:nth-child(1) .skeletonCell:nth-child(2) { width: 80%; }
+  .skeletonRow:nth-child(2) .skeletonCell:nth-child(2) { width: 60%; }
+  .skeletonRow:nth-child(3) .skeletonCell:nth-child(2) { width: 90%; }
+  .skeletonRow:nth-child(4) .skeletonCell:nth-child(2) { width: 70%; }
+  .skeletonRow:nth-child(5) .skeletonCell:nth-child(2) { width: 85%; }
+  
+  // ── Empty state ───────────────────────────────────────────────────────────────
+  .empty {
+    @extend .admin-table-empty !optional;
+  }
+  
+  .emptyIcon {
+    width: 40px;
+    height: 40px;
+    color: $ink-faint;
+  }
+  
+  .emptyTitle {
+    font-size: $text-base;
+    font-weight: $fw-medium;
+    color: $ink-muted;
+  }
+  
+  .emptyDesc {
+    font-size: $text-sm;
+    color: $ink-faint;
+    max-width: 280px;
+    text-align: center;
+  }
+  
+  // ── Toolbar (search + filters above the table) ────────────────────────────────
+  .toolbar {
+    @include flex-between($gap: $space-3);
+    padding: $space-3 $space-4;
+    border-bottom: $border;
+    flex-wrap: wrap;
+    background: $surface-2;
+  
+    @include respond-below('sm') {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  
+  .toolbarLeft  { @include flex-start($gap: $space-2); flex-wrap: wrap; flex: 1; }
+  .toolbarRight { @include flex-start($gap: $space-2); flex-shrink: 0; }
+  
+  // ── Pagination row ────────────────────────────────────────────────────────────
+  .pagination {
+    @include flex-between;
+    padding: $space-3 $space-4;
+    border-top: $border;
+    background: $surface-2;
+    border-bottom-left-radius: $radius-md;
+    border-bottom-right-radius: $radius-md;
+  
+    @include respond-below('sm') {
+      flex-direction: column;
+      gap: $space-2;
+    }
+  }
+  
+  .paginationInfo {
+    font-size: $text-xs;
+    color: $ink-muted;
+  }
+  
+  .paginationControls {
+    @include flex-start($gap: $space-1);
+  }
+  
+  .pageBtn {
+    @include button-base;
+    @include flex-center;
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    font-size: $text-xs;
+    font-weight: $fw-medium;
+    color: $ink-muted;
+    background: transparent;
+  
+    &:hover:not(:disabled) {
+      background: $surface-3;
+      color: $ink-default;
+    }
+  
+    &.active {
+      background: $brand-color-light;
+      color: $brand-color;
+      font-weight: $fw-semibold;
+    }
+  
+    &:disabled { opacity: 0.3; }
+  
+    @include focus-ring;
+  }
