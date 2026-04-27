@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Button } from '@components/ui/Button';
 
 export function NotFound() {
@@ -12,7 +11,7 @@ export function NotFound() {
           The page you're looking for doesn't exist or has been moved.
         </p>
         <Button variant="primary" size="md" href="/dashboard">
-          <Link to={"/dashboard"}>Back to Dashboard</Link>
+          Back to Dashboard
         </Button>
       </div>
     </div>
