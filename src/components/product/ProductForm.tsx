@@ -146,7 +146,7 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
       <section style={sectionStyle}>
         <h2 style={sectionHeadingStyle}>Basic Information</h2>
         <div style={gridStyle}>
-          <Input label="Product Name" required error={errors.name?.message!} {...register('name')} />
+          <Input label="Product Name" required error={errors.name!.message!} {...register('name')} />
           <Controller
             name="category"
             control={control}
@@ -157,7 +157,7 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
                 value={field.value}
                 onChange={v => field.onChange(v ?? '')}
                 options={categoryOptions}
-                error={errors.category?.message!}
+                error={errors.category!.message!}
                 searchable
               />
             )}
@@ -183,7 +183,7 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
       <section style={{ ...sectionStyle, marginTop: 16 }}>
         <h2 style={sectionHeadingStyle}>Pricing</h2>
         <div style={gridStyle}>
-          <Input label="Price" required type="number" step="0.01" error={errors.price?.message!} leftAdornment="EGP" {...register('price')} />
+          <Input label="Price" required type="number" step="0.01" error={errors.price!.message!} leftAdornment="EGP" {...register('price')} />
           <Input label="Compare-at Price" type="number" step="0.01" hint="Crossed-out original price" leftAdornment="EGP" {...register('compareAtPrice')} />
           <Input label="Cost Price" type="number" step="0.01" hint="For margin calculation only" leftAdornment="EGP" {...register('costPrice')} />
         </div>
@@ -237,21 +237,21 @@ export function ProductForm({ productId, onSuccess }: ProductFormProps) {
               <div key={field.id} style={variantRowStyle}>
                 <Input
                   placeholder="Size *"
-                  error={errors.variants?.[index]?.size?.message!}
+                  error={errors.variants![index]!.size!.message!}
                   {...register(`variants.${index}.size`)}
                   style={{ width: 80 }}
                 />
                 <Input placeholder="Colour" {...register(`variants.${index}.color`)} style={{ width: 100 }} />
                 <Input
                   placeholder="SKU *"
-                  error={errors.variants?.[index]?.sku?.message!}
+                  error={errors.variants![index]!.sku!.message!}
                   {...register(`variants.${index}.sku`)}
                   style={{ flex: 1 }}
                 />
                 <Input
                   placeholder="Stock *"
                   type="number" min="0"
-                  error={errors.variants?.[index]?.stock?.message!}
+                  error={errors.variants![index]!.stock!.message!}
                   {...register(`variants.${index}.stock`)}
                   style={{ width: 80 }}
                 />
