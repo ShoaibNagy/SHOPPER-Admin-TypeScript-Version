@@ -8,7 +8,7 @@ import type {
   UpdateOrderTrackingDto,
   UpdateOrderAdminNotesDto,
 } from '@/types/order.types';
-import type { ApiError } from '@/types/api.types';
+import { extractErrorMessage } from '@utils/extractErrorMessage';
 
 // ---------------------------------------------------------------------------
 // useAdminOrders — paginated list with filters
@@ -59,8 +59,8 @@ export function useUpdateOrderStatus(id: string) {
       onSuccess(updated);
       toast.success(`Order status updated to "${updated.status}".`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to update order status.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to update order status.'));
     },
   });
 }
@@ -76,8 +76,8 @@ export function useUpdateOrderTracking(id: string) {
       onSuccess(updated);
       toast.success('Tracking information saved.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to save tracking info.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to save tracking info.'));
     },
   });
 }
@@ -93,8 +93,8 @@ export function useUpdateOrderAdminNotes(id: string) {
       onSuccess(updated);
       toast.success('Admin notes saved.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to save notes.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to save notes.'));
     },
   });
 }
@@ -110,8 +110,8 @@ export function useRefundOrder(id: string) {
       onSuccess(updated);
       toast.success('Refund initiated successfully.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Refund failed. Please try again or use Stripe dashboard.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Refund failed. Please try again or use Stripe dashboard.'));
     },
   });
 }
@@ -128,8 +128,8 @@ export function useDeleteOrder() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.orders.lists() });
       toast.success('Order deleted.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to delete order.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to delete order.'));
     },
   });
 }

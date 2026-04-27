@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { productsApi } from '@api/products.api';
 import { queryKeys } from '@utils/queryKeys';
 import type { ProductListParams, CreateProductDto, UpdateProductDto } from '@/types/product.types';
-import type { ApiError } from '@/types/api.types';
+import { extractErrorMessage } from '@utils/extractErrorMessage';
 
 // ---------------------------------------------------------------------------
 // useAdminProducts — paginated list with filters
@@ -54,8 +54,8 @@ export function useCreateProduct() {
       queryClient.setQueryData(queryKeys.products.detail(newProduct._id), newProduct);
       toast.success(`"${newProduct.name}" created successfully.`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to create product.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to create product.'));
     },
   });
 }
@@ -74,8 +74,8 @@ export function useUpdateProduct(id: string) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.products.lists() });
       toast.success(`"${updated.name}" saved.`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to save product.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to save product.'));
     },
   });
 }
@@ -94,8 +94,8 @@ export function useDeleteProduct() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.products.lists() });
       toast.success('Product deleted.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to delete product.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to delete product.'));
     },
   });
 }
@@ -112,8 +112,8 @@ export function useUploadProductImages(productId: string) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(productId) });
       toast.success('Images uploaded.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Image upload failed.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Image upload failed.'));
     },
   });
 }
@@ -129,8 +129,8 @@ export function useDeleteProductImage(productId: string) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(productId) });
       toast.success('Image removed.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to remove image.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to remove image.'));
     },
   });
 }

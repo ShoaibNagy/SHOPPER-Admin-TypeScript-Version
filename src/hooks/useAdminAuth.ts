@@ -6,7 +6,7 @@ import { authApi } from '@api/auth.api';
 import { useAuthStore } from '@store/auth.store';
 import { queryKeys } from '@utils/queryKeys';
 import type { LoginRequest } from '@/types/auth.types';
-import type { ApiError } from '@/types/api.types';
+import { extractErrorMessage } from '@utils/extractErrorMessage';
 
 // ---------------------------------------------------------------------------
 // useAdminAuth
@@ -37,8 +37,8 @@ export function useAdminAuth() {
       toast.success(`Welcome back, ${adminUser.name.split(' ')[0]}!`);
       navigate(from, { replace: true });
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Login failed. Please check your credentials.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Login failed. Please check your credentials.'));
     },
   });
 
@@ -59,6 +59,11 @@ export function useAdminAuth() {
     }
   }
 
+  // Safely extract the error message for components that want to render it
+  const loginErrorMessage = loginMutation.error
+    ? extractErrorMessage(loginMutation.error, 'Login failed.')
+    : null;
+
   return {
     // State
     admin,
@@ -69,7 +74,8 @@ export function useAdminAuth() {
     login: loginMutation.mutate,
     loginAsync: loginMutation.mutateAsync,
     isLoginPending: loginMutation.isPending,
-    loginError: loginMutation.error as ApiError | null,
+    loginError: loginMutation.error,          // raw Error | null from TanStack
+    loginErrorMessage,                         // pre-extracted string | null — use this in JSX
     // Logout
     logout,
   };

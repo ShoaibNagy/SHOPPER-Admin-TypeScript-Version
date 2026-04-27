@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { usersApi } from '@api/users.api';
 import { queryKeys } from '@utils/queryKeys';
 import type { UserListParams, UpdateUserDto } from '@/types/user.types';
-import type { ApiError } from '@/types/api.types';
+import { extractErrorMessage } from '@utils/extractErrorMessage';
 
 // ---------------------------------------------------------------------------
 // useAdminUsers — paginated list with filters
@@ -53,8 +53,8 @@ export function useUpdateUser(id: string) {
       onSuccess(updated);
       toast.success('User updated.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to update user.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to update user.'));
     },
   });
 }
@@ -70,8 +70,8 @@ export function useSuspendUser(id: string) {
       onSuccess(updated);
       toast.success(`${updated.name} has been suspended.`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to suspend user.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to suspend user.'));
     },
   });
 }
@@ -87,8 +87,8 @@ export function useActivateUser(id: string) {
       onSuccess(updated);
       toast.success(`${updated.name}'s account has been reactivated.`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to activate user.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to activate user.'));
     },
   });
 }
@@ -105,8 +105,8 @@ export function useDeleteUser() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() });
       toast.success('User deleted.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to delete user.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to delete user.'));
     },
   });
 }

@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { reviewsApi } from '@api/reviews.api';
 import { queryKeys } from '@utils/queryKeys';
 import type { ReviewListParams, UpdateReviewStatusDto } from '@/types/review.types';
-import type { ApiError } from '@/types/api.types';
+import { extractErrorMessage } from '@utils/extractErrorMessage';
 
 // ---------------------------------------------------------------------------
 // useAdminReviews — paginated list with filters
@@ -54,8 +54,8 @@ export function useUpdateReviewStatus(id: string) {
       const label = updated.status === 'approved' ? 'approved' : 'rejected';
       toast.success(`Review ${label}.`);
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to update review status.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to update review status.'));
     },
   });
 }
@@ -71,8 +71,8 @@ export function useApproveReview(id: string) {
       onSuccess(updated);
       toast.success('Review approved and published.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to approve review.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to approve review.'));
     },
   });
 }
@@ -88,8 +88,8 @@ export function useRejectReview(id: string) {
       onSuccess(updated);
       toast.success('Review rejected.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to reject review.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to reject review.'));
     },
   });
 }
@@ -106,8 +106,8 @@ export function useDeleteReview() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.reviews.lists() });
       toast.success('Review deleted.');
     },
-    onError: (err: ApiError) => {
-      toast.error(err.message ?? 'Failed to delete review.');
+    onError: (err: unknown) => {
+      toast.error(extractErrorMessage(err, 'Failed to delete review.'));
     },
   });
 }
