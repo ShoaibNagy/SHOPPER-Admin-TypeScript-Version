@@ -22,7 +22,7 @@ const ROLE_OPTIONS = [
   { value: 'super_admin' as UserRole, label: 'Super Admin' },
 ];
 
-export function UserDetail() {
+export function UserDetails() {
   const { id } = useParams<{ id: string }>();
   const { data: user, isLoading } = useAdminUser(id);
 

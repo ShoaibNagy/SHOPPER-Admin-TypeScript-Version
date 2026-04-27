@@ -30,7 +30,7 @@ const ALL_STATUSES: { value: OrderStatus; label: string }[] = [
 // ---------------------------------------------------------------------------
 // OrderDetail
 // ---------------------------------------------------------------------------
-export function OrderDetail() {
+export function OrderDetails() {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading } = useAdminOrder(id);
 
