@@ -4,6 +4,7 @@
 
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use 'sass:color'; // ← Add this import for color functions
 
 // ── Base ──────────────────────────────────────────────────────────────────────
 .btn {
@@ -97,7 +98,7 @@
     font-weight: $fw-semibold;
   
     &:hover:not(:disabled) {
-      background: darken($danger, 8%);
+      background: color.adjust($danger, $lightness: -8%);
       box-shadow: 0 0 0 3px $danger-subtle;
     }
     @include focus-ring($danger);
