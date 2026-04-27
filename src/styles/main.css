@@ -85,7 +85,12 @@ table {
   scroll-margin-top: calc(56px + 1rem);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "DM Sans", sans-serif;
   font-weight: 600;
   color: #f0f0f0;
@@ -181,12 +186,12 @@ p {
   font-weight: 500;
 }
 
-a {
+a:not([class]) {
   color: #f97316;
   text-decoration: none;
   transition: color 100ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-a:hover {
+a:not([class]):hover {
   color: #ea6e10;
 }
 
