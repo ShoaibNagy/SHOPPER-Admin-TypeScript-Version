@@ -1,192 +1,159 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { UserStatusBadge, Badge } from '@components/ui/Badge';
-import { Button } from '@components/ui/Button';
-import { Select } from '@components/ui/Select';
-import { Modal } from '@components/ui/Modal';
-import { Spinner } from '@components/ui/Spinner';
-import { formatCurrency } from '@utils/formatCurrency';
-import { formatDate } from '@utils/formatDate';
 import {
-  useAdminUser,
-  useUpdateUser,
-  useSuspendUser,
-  useActivateUser,
-  useDeleteUser,
-} from '@hooks/useAdminUsers';
-import type { UserRole } from '@/types/user.types';
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import { formatCurrencyCompact, formatCurrency } from '@utils/formatCurrency';
+import { formatDate } from '@utils/formatDate';
 
-const ROLE_OPTIONS = [
-  { value: 'customer'    as UserRole, label: 'Customer'    },
-  { value: 'admin'       as UserRole, label: 'Admin'       },
-  { value: 'super_admin' as UserRole, label: 'Super Admin' },
-];
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+export interface RevenueDataPoint {
+  date:    string; // ISO date string
+  revenue: number;
+  orders:  number;
+}
 
-export function UserDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { data: user, isLoading } = useAdminUser(id);
+interface RevenueChartProps {
+  data:      RevenueDataPoint[];
+  isLoading?: boolean;
+}
 
-  const updateMutation   = useUpdateUser(id!);
-  const suspendMutation  = useSuspendUser(id!);
-  const activateMutation = useActivateUser(id!);
-  const deleteMutation   = useDeleteUser();
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; name: string }>;
+  label?: string | number;
+}
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [newRole,    setNewRole]    = useState<UserRole | null>(null);
-
-  if (isLoading) return <Spinner variant="page" label="Loading user…" />;
-  if (!user)     return <div style={{ color: '#9a9a9a', padding: 32 }}>User not found.</div>;
-
-  const initials = user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
-
+// ---------------------------------------------------------------------------
+// Custom Tooltip
+// ---------------------------------------------------------------------------
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload?.length) return null;
+  const revenue = payload[0]?.value ?? 0;
+  const orders  = payload[1]?.value ?? 0;
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-      {/* ── Header ─────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(249,115,22,0.12)', border: '2px solid rgba(249,115,22,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700, color: '#f97316', overflow: 'hidden', flexShrink: 0 }}>
-            {user.avatar ? <img src={user.avatar} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <Link to="/users" style={{ color: '#9a9a9a', fontSize: 12, textDecoration: 'none' }}>← Users</Link>
-            </div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, color: '#f0f0f0', margin: 0, fontFamily: 'Unbounded, sans-serif', letterSpacing: '-0.03em' }}>{user.name}</h1>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
-              <UserStatusBadge status={user.status} />
-              <Badge variant="muted" size="sm">{user.role.replace('_', ' ')}</Badge>
-              {user.emailVerified && <Badge variant="success" size="sm">Verified</Badge>}
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8 }}>
-          {user.status === 'active'    && <Button variant="danger"    size="sm" isLoading={suspendMutation.isPending}  onClick={() => suspendMutation.mutate()}>Suspend</Button>}
-          {user.status === 'suspended' && <Button variant="success"   size="sm" isLoading={activateMutation.isPending} onClick={() => activateMutation.mutate()}>Activate</Button>}
-          <Button variant="ghost" size="sm" onClick={() => setDeleteOpen(true)}>Delete</Button>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20, alignItems: 'start' }}>
-
-        {/* ── Left ──────────────────────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-          {/* Stats row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-            {[
-              { label: 'Total Orders', value: user.orderCount.toString() },
-              { label: 'Total Spent',  value: formatCurrency(user.totalSpent) },
-              { label: 'Member Since', value: formatDate(user.createdAt) },
-            ].map(stat => (
-              <div key={stat.label} style={{ background: '#1c1c1c', border: '1px solid #383838', borderRadius: 8, padding: '14px 16px' }}>
-                <div style={{ fontSize: 11, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{stat.label}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#f0f0f0', fontFamily: 'Unbounded, sans-serif', letterSpacing: '-0.02em' }}>{stat.value}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Contact info */}
-          <section style={cardStyle}>
-            <h2 style={cardHeading}>Contact Information</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              {[
-                { label: 'Email',  value: user.email,        mono: true },
-                { label: 'Phone',  value: user.phone ?? '—'              },
-                { label: 'Role',   value: user.role.replace('_', ' ')    },
-                { label: 'Last order', value: user.lastOrderAt ? formatDate(user.lastOrderAt) : '—' },
-              ].map(row => (
-                <div key={row.label}>
-                  <div style={{ fontSize: 11, color: '#9a9a9a', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>{row.label}</div>
-                  <div style={{ fontSize: 13, color: '#f0f0f0', fontFamily: row.mono ? 'JetBrains Mono, monospace' : 'DM Sans, sans-serif' }}>{row.value}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Addresses */}
-          {user.addresses.length > 0 && (
-            <section style={cardStyle}>
-              <h2 style={cardHeading}>Saved Addresses ({user.addresses.length})</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {user.addresses.map(addr => (
-                  <div key={addr._id} style={{ padding: 12, background: '#242424', borderRadius: 6, border: '1px solid #2e2e2e' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#f0f0f0' }}>{addr.label ?? 'Address'}</span>
-                      {addr.isDefault && <Badge variant="brand" size="sm">Default</Badge>}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#9a9a9a', lineHeight: 1.6 }}>
-                      {addr.firstName} {addr.lastName} · {addr.street}, {addr.city}{addr.state ? `, ${addr.state}` : ''} {addr.postalCode}, {addr.country} · {addr.phone}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-
-        {/* ── Right ─────────────────────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-          {/* Role editor */}
-          <section style={cardStyle}>
-            <h2 style={cardHeading}>Access Role</h2>
-            <Select
-              value={newRole ?? user.role}
-              onChange={v => setNewRole(v as UserRole)}
-              options={ROLE_OPTIONS}
-            />
-            <Button
-              variant="secondary" size="sm" type="button"
-              disabled={!newRole || newRole === user.role}
-              isLoading={updateMutation.isPending}
-              style={{ marginTop: 10, width: '100%' } as React.CSSProperties}
-              onClick={() => newRole && updateMutation.mutate({ role: newRole }, { onSuccess: () => setNewRole(null) })}
-            >
-              Save Role
-            </Button>
-          </section>
-
-          {/* User ID */}
-          <section style={cardStyle}>
-            <h2 style={cardHeading}>User ID</h2>
-            <code style={{ fontSize: 11, color: '#9a9a9a', fontFamily: 'JetBrains Mono, monospace', wordBreak: 'break-all' }}>
-              {user._id}
-            </code>
-          </section>
-        </div>
-      </div>
-
-      {/* ── Delete modal ───────────────────────────────────────────── */}
-      <Modal isOpen={deleteOpen} onClose={() => setDeleteOpen(false)} size="sm" danger aria-labelledby="delete-user-title">
-        <Modal.Header>
-          <Modal.Title id="delete-user-title">Delete User</Modal.Title>
-          <Modal.Subtitle>This is a soft-delete — the user's data is preserved.</Modal.Subtitle>
-        </Modal.Header>
-        <Modal.Body>
-          <p style={{ color: '#9a9a9a', fontSize: 14, margin: 0 }}>
-            Delete <strong style={{ color: '#f0f0f0' }}>{user.name}</strong>? They will be unable to log in and their account will be marked as deleted.
-          </p>
-        </Modal.Body>
-        <Modal.Footer
-          actions={
-            <>
-              <Button variant="secondary" size="sm" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-              <Button
-                variant="dangerSolid" size="sm"
-                isLoading={deleteMutation.isPending}
-                onClick={() => deleteMutation.mutate(user._id, { onSuccess: () => setDeleteOpen(false) })}
-              >
-                Delete User
-              </Button>
-            </>
-          }
-        />
-      </Modal>
+    <div style={{
+      background: '#242424',
+      border: '1px solid #383838',
+      borderRadius: 8,
+      padding: '10px 14px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.7)',
+      fontFamily: 'DM Sans, sans-serif',
+      minWidth: 160,
+    }}>
+      <p style={{ color: '#9a9a9a', fontSize: 11, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        {label != null ? formatDate(label) : '—'}
+      </p>
+      <p style={{ color: '#f0f0f0', fontSize: 15, fontWeight: 700, fontFamily: 'Unbounded, sans-serif', letterSpacing: '-0.02em', marginBottom: 4 }}>
+        {formatCurrency(revenue)}
+      </p>
+      <p style={{ color: '#9a9a9a', fontSize: 12 }}>
+        {orders} {orders === 1 ? 'order' : 'orders'}
+      </p>
     </div>
   );
 }
 
-const cardStyle: React.CSSProperties = { background: '#1c1c1c', border: '1px solid #383838', borderRadius: 8, padding: 20 };
-const cardHeading: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: '#f0f0f0', margin: '0 0 14px', fontFamily: 'DM Sans, sans-serif' };
+// ---------------------------------------------------------------------------
+// RevenueChart
+// ---------------------------------------------------------------------------
+export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
+  if (isLoading) {
+    return (
+      <div style={{ height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          width: '100%', height: '100%',
+          background: 'linear-gradient(90deg, #242424 25%, #2e2e2e 50%, #242424 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.8s linear infinite',
+          borderRadius: 8,
+        }} />
+      </div>
+    );
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height={280}>
+      <AreaChart data={data} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+        <defs>
+          {/* Brand-orange gradient fill */}
+          <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="#f97316" stopOpacity={0.25} />
+            <stop offset="100%" stopColor="#f97316" stopOpacity={0}    />
+          </linearGradient>
+          <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="#3b82f6" stopOpacity={0.15} />
+            <stop offset="100%" stopColor="#3b82f6" stopOpacity={0}    />
+          </linearGradient>
+        </defs>
+
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="#2e2e2e"
+          vertical={false}
+        />
+
+        <XAxis
+          dataKey="date"
+          tickFormatter={d => {
+            const dt = new Date(d);
+            return dt.toLocaleDateString('en-EG', { month: 'short', day: 'numeric' });
+          }}
+          tick={{ fill: '#9a9a9a', fontSize: 11, fontFamily: 'DM Sans, sans-serif' }}
+          axisLine={false}
+          tickLine={false}
+          interval="preserveStartEnd"
+        />
+
+        <YAxis
+          yAxisId="revenue"
+          tickFormatter={v => formatCurrencyCompact(v)}
+          tick={{ fill: '#9a9a9a', fontSize: 11, fontFamily: 'DM Sans, sans-serif' }}
+          axisLine={false}
+          tickLine={false}
+          width={64}
+        />
+
+        <YAxis
+          yAxisId="orders"
+          orientation="right"
+          tick={{ fill: '#9a9a9a', fontSize: 11, fontFamily: 'DM Sans, sans-serif' }}
+          axisLine={false}
+          tickLine={false}
+          width={32}
+        />
+
+        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#383838', strokeWidth: 1 }} />
+
+        <Area
+          yAxisId="revenue"
+          type="monotone"
+          dataKey="revenue"
+          stroke="#f97316"
+          strokeWidth={2}
+          fill="url(#revenueGradient)"
+          dot={false}
+          activeDot={{ r: 4, fill: '#f97316', stroke: '#1c1c1c', strokeWidth: 2 }}
+        />
+
+        <Area
+          yAxisId="orders"
+          type="monotone"
+          dataKey="orders"
+          stroke="#3b82f6"
+          strokeWidth={1.5}
+          strokeDasharray="4 3"
+          fill="url(#ordersGradient)"
+          dot={false}
+          activeDot={{ r: 3, fill: '#3b82f6', stroke: '#1c1c1c', strokeWidth: 2 }}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+}
