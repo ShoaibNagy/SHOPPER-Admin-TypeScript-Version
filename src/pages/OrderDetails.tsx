@@ -1,0 +1,1 @@
+export { OrderDetails } from '@/components/order/OrderDetails';
