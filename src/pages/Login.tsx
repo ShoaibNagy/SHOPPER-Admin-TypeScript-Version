@@ -64,7 +64,7 @@ export function Login() {
             autoComplete="email"
             autoFocus
             placeholder="admin@shopper.com"
-            error={errors.email!.message!}
+            error={errors.email?.message ?? ""}   // this is safe — optional chaining
             required
             {...register('email')}
           />
@@ -74,7 +74,7 @@ export function Login() {
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
-            error={errors.password!.message!}
+            error={errors.password?.message ?? ""}
             required
             {...register('password')}
           />
